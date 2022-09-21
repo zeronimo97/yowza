@@ -1,0 +1,36 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- com.abc.dao.UserDAO 인터페이스와 매핑됨 -->
+<mapper namespace="com.abc.dao.OrderDAO">
+	<select id = "selectOneBook" parameterType = "int" resultType = "BookVO">
+		SELECT * FROM STORE_BOOK
+		WHERE BOOKNUM = #{bookNum}
+	</select> 
+	
+	<select id = "selectAllBook" resultType = "BookVO">
+		SELECT * FROM STORE_BOOK
+	</select>
+	
+	<insert id = "insertOrder" parameterType = "OrderVO">
+		INSERT INTO STORE_ORDER(
+			ORDERNUM,
+			BOOKNAME,
+			USERID,
+			USERNAME,
+			ALLPRICE,
+			ADDRESS
+		)
+		VALUES(
+			ORDERNUM_SEQ.NEXTVAL,
+			#{bookName},
+			#{userId},
+			#{userName},
+			#{allPrice},
+			#{address}
+		)
+		
+	</insert>
+</mapper>
+

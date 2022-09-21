@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/"
+		xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<title>[주문하기]</title>
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Stylish&display=swap');
+	input, textarea {
+		width : 200px;
+		height : 20px;
+		border : 0;
+		resize : none;
+	}
+	.resizing {
+		width : 300px;
+	}
+	#address {
+		width : 400px;
+		resize : horizontal;
+	}
+	textarea {
+		width : 400px;
+		height : 200px;
+	}
+	input:focus, textarea:focus{
+		outline: none;
+	}
+	.button {
+		font-weight: bolder;
+		border-radius: 12px 0 0 12px;
+		background-color: white;
+		color :  #1f9a50;
+		
+	}
+	.check {
+		font-weight: bolder;
+		border-radius: 0 12px 12px 0;
+		background-color: white;
+		color :  #1f9a50;
+	}
+	.button:hover {
+		font-weight: bolder;
+		background-color: #1f9a50;
+		color : white;
+	}
+	
+	table {
+		border-collapse: collapse;
+		border-color: #1f9a50;
+		border-radius: 16px;
+		box-shadow : inset 0 0 8px #1f9a50;
+		box-sizing: border-box;
+		border : hidden;
+		margin-left:auto; 
+    	margin-right:auto;
+	}
+	
+	td, th {
+		padding : 5px;
+		border : 1px solid;
+		border-color: #1f9a50;
+	}
+	* {
+		font-weight: bolder;
+		font-family: 'Stylish', sans-serif;
+	}
+</style>
+</head>
+<body>
+<form th:action = "orderForm" th:method = "POST" th:onsubmit = "return checkValue();">
+	<table>
+		<tr>
+			<th>Book 제목</th>
+			<td>
+				<input type = "text" name = "bookName" th:value = "${book.bookName}" readonly>
+			</td>
+		</tr>
+		<tr>
+			<th>Book 가격</th>
+			<td>
+				<input type = "text" name = "allPrice" id = "allprice" th:value = "${book.bookPrice}" readonly><span>원</span>
+			</td>
+		</tr>
+		<tr>
+			<th>줄거리</th>
+			<td colspan = "2">
+				<textarea id = "content" th:text = "${book.book_Description}" cols = 30 rows = 30 readonly></textarea>
+			</td>
+		</tr>
+		<tr>
+			<th>Customer ID</th>
+			<td>
+				<input type = "text" name = "userId" th:value = "${user.userId}" readonly> 
+			</td>
+		</tr>
+		<tr>
+			<th>수령하실 분</th>
+			<td>
+				<input type = "text" id = "userName" name = "userName" placeholder = "받으실 분의 이름을 입력해주세요">
+			</td>
+		</tr>
+		<tr>
+			<th>주소</th>
+			<td colspan = "2">
+				<input type="text" id = "zipcode" size = "7" placeholder = "우편번호 찾기를 해주세요" readonly>
+				<input type="button" value = "우편번호찾기" th:onclick = "post();" class = "button check"><br>
+				<input type = "text" id = "address" name = "address" placeholder = "도로명주소">
+			</td>
+		</tr>
+		<tr>
+			<th colspan = "2">
+				<input type = "submit" value = "주문하기" class = "button resizing">
+				<input type = "button" value = "home" th:onclick = "return check();" class = "button check resizing">
+			</th>
+		</tr>
+	</table>
+</form>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+	// 빈칸 확인
+	function checkValue(){
+		let address = document.getElementById('address');
+		let userName = document.getElementById('userName');
+		let testNum = /^[A-Za-z0-9]+$/; 
+		let zipCode = document.getElementById('zipcode');
+		
+		if(userName.value.trim().length == 0){
+				alert('받으실 분 이름을 입력해주세요.');
+				userName.focus();
+				return false;
+		} else if(testNum.test(userName)){
+			alert('성함은 한글로만 입력해주세요.');
+			userName.focus();
+			return false;
+		} else if(userName.value.trim().length < 3 || userName.value.trim().length > 10){
+			alert('성함은 3~10자로 입력해주세요.');
+			userName.focus();
+			return false;
+		} else if (zipCode.value.trim().length == 0){
+			alert('우편번호 찾기를 해주세요');
+			return false;
+		} else if(address.value.trim().length == 0){
+			alert('주소를 입력해주세요.');
+			address.focus();
+			return false;
+		}
+		
+		let result = confirm('주문하시겠습니까?');
+		if(result){
+			return checkAddress();
+		} else {
+			return false;
+		}
+		
+	}
+	
+	// home 버튼 클릭시 확인
+	function check(){
+		let result = confirm('주문을 취소하고 홈으로 이동하시겠습니까?');
+		
+		if(result == true){
+			location.href = "/";
+		} else {
+			return false;
+		}
+		
+	}
+	
+	// 주소 
+	function post(){
+	    new daum.Postcode({
+	        oncomplete: function(data) {
+	        	document.querySelector("#zipcode").value = data.zonecode;
+	        	document.querySelector("#address").value = data.address;
+	        }
+	    }).open();
+	}
+	
+	// 주소 한번 더 확인
+	function checkAddress(){
+		let address = document.getElementById('address').value;
+		let result = confirm(address + '\n위의 주소가 맞으십니까?');
+		
+		if(result == true){
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+</script>
+</body>
+</html>

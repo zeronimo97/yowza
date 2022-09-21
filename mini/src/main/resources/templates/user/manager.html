@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/"
+		xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<title>관리자용 페이지입니다</title>
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Stylish&display=swap');
+	table {
+		border-collapse: collapse;
+		border-color: #1f9a50;
+		border-radius: 16px;
+		box-shadow : inset 0 0 8px #1f9a50;
+		box-sizing: border-box;
+		border : hidden;
+		margin-left:auto; 
+    	margin-right:auto;
+	}
+	td, th {
+		padding : 5px;
+		border : 1px solid;
+		border-color: #1f9a50;
+	}
+	* {
+		font-weight: bolder;
+		font-family: 'Stylish', sans-serif;
+		text-align: center;
+	}
+		input, textarea {
+		width : 100px;
+		height : 20px;
+		border : 0;
+		resize : none;
+	}
+	.resizing {
+		width : 50px;
+	}
+	input:focus, textarea:focus{
+		outline: none;
+	}
+	.button {
+		font-weight: bolder;
+		border-radius: 12px 0 0 12px;
+		background-color: white;
+		color :  #1f9a50;
+		
+	}
+	.check {
+		font-weight: bolder;
+		border-radius: 12px 12px 12px 12px;
+		background-color: white;
+		color :  #1f9a50;
+	}
+	.button:hover {
+		font-weight: bolder;
+		background-color: #1f9a50;
+		color : white;
+	}
+	a {
+		text-decoration: none;
+	}
+	section {
+		margin-top  : 10%;
+	}
+	p {
+		font-size: xx-large;
+		color : red;
+	}
+	span {
+	padding : 5px;
+	}
+</style>
+</head>
+<body>
+<div sec:authorize = "isAuthenticated() && hasRole('USER')">
+	<script>
+		let time = 1;
+		
+		let x = setInterval(function(){
+			
+			document.getElementById('time').innerText = time + '초 뒤 컴퓨터가 폭파됩니다';
+			time--;
+			
+			if(time < 0){
+				location.href = '/';
+			}
+			
+		}, 1000);
+	</script>
+	<p id = "time"></p>
+	<img src ="https://dszw1qtcnsa5e.cloudfront.net/community/20210409/b78ad432-e675-431f-8391-9c3a39ff915a/image01.gif">
+</div>
+<header sec:authorize = "isAuthenticated() && hasRole('ADMIN')">
+	<h1>관리자님 환영합니다!</h1>
+</header>
+
+<section sec:authorize = "isAuthenticated() && hasRole('ADMIN')">
+	<table border = "1">
+		<tr>
+			<th>유저 ID</th>
+			<th>현재 권한</th>
+			<th>수정/삭제</th>
+		</tr>
+		<tr th:each = "user : ${userList}">
+			<td>
+				<a th:href = "@{|/order/orderList?userId=${user.userId}|}">
+					<span th:text = "${user.userId}" id = "userId"></span>
+				</a>
+			</td>
+			<td th:text = "${user.roleName}" th:value = "${user.roleName}"></td>
+			<td>
+				<a th:href = "@{|/user/updateUserForManager?userId=${user.userId}|}" class = "button check resizing">
+					<span th:text = "수정"></span>
+				</a><br>
+				<a th:href = "@{|/user/updateRole?userId=${user.userId}|}" th:onclick="window.open(this.href, '_blank', 'width=400, height=300 top=300 left=700'); return false;" class = "button check resizing">
+					<span th:text = "권한변경"></span>
+				</a><br>
+				<a th:href = "@{|/user/deleteUserForManager?userId=${user.userId}|}" th:onclick="window.open(this.href, '_blank', 'width=400, height=300 top=300 left=700'); return false;" class = "button check resizing">
+					<span th:text = "탈퇴"></span>
+				</a><br>
+				
+			</td>
+		</tr>
+		<tr>
+			<td colspan = "3">
+				<input type = "button" value = "HOME" th:onclick = "return check();" class = "button check resizing">
+			</td>
+		</tr>
+	</table>
+</section>
+<iframe name = "hframe4" style="display:none;"></iframe>
+<script>
+// home 버튼
+	function check(){
+		let result = confirm('홈으로 이동하시겠습니까?');
+		
+		if(result == true){
+			location.href = "/";
+		} else {
+			return false;
+		}
+		
+	}
+	
+	// 회원 탈퇴시키기 버튼
+	function deleteUser(){
+		/* if(deleteUser == true){
+			let f = document.createElement('form');
+		    f.setAttribute('method', 'post');
+		    f.setAttribute('action', '/user/deleteUserForManager?userId=' + userId);
+			document.body.appendChild(f);
+		    f.submit();
+		} else {
+			
+			return false;
+		} */
+	}
+	
+	function updateRole(){
+	
+	/* 	if(updateRole == true){
+			let f = document.createElement('form');
+		    f.setAttribute('method', 'post');
+		    f.setAttribute('action', '/user/updateRole?userId='+role);
+			document.body.appendChild(f);
+		    f.submit();
+		} else {
+			
+			return false;
+		} */
+	}
+	
+</script>
+</body>
+</html>

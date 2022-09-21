@@ -1,0 +1,10 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- com.abc.dao.UserDAO 인터페이스와 매핑됨 -->
+<mapper namespace="com.abc.dao.BoardDAO">
+	
+	
+</mapper>
+

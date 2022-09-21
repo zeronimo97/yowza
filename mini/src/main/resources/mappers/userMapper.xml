@@ -1,0 +1,55 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- com.abc.dao.UserDAO 인터페이스와 매핑됨 -->
+<mapper namespace="com.abc.dao.UserDAO">
+	<insert id = "insertUser" parameterType = "UserVO">
+		INSERT INTO STORE_USER(
+			USERID,
+			USERPW,
+			USERNAME
+		)
+		VALUES(
+			#{userId},
+			#{userPw},
+			#{userName}
+		)
+	</insert>
+	
+	<!-- 모든 유저 불러오기 -->
+	<select id = "selectAllUser" resultType = "UserVO">
+		SELECT * FROM STORE_USER
+	</select>
+	
+	<select id = "selectById" parameterType = "String" resultType = "UserVO">
+		SELECT * FROM STORE_USER
+		WHERE USERID = #{userId}
+	</select>
+
+	<update id = "updateUser" parameterType = "UserVO">
+		UPDATE STORE_USER
+		SET 
+			<if test = "userPw != null">
+				USERPW = #{userPw},
+			</if>
+			<if test = "userName != null">
+				USERNAME = #{userName}
+			</if>
+		WHERE 
+			USERID = #{userId}
+	</update>
+	<!-- 유저 탈퇴 -->
+	<delete id = "deleteUser" parameterType = "string">
+		DELETE FROM STORE_USER
+		WHERE USERID = #{userId}
+	</delete>
+	
+	<!-- 권한 변경 -->
+	<update id = "updateRole" parameterType = "UserVO">
+		UPDATE STORE_USER
+		SET ROLENAME = #{roleName}
+		WHERE USERID = #{userId}
+	</update>
+</mapper>
+
